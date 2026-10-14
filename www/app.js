@@ -112,6 +112,14 @@
     }
   }
 
+  function syncUndoButton() {
+    if (!btnUndo) return;
+    const unavailable = isLevelCompleted || undoStack.length === 0;
+    btnUndo.disabled = unavailable;
+    btnUndo.setAttribute('aria-disabled', String(unavailable));
+    btnUndo.classList.toggle('is-disabled', unavailable);
+  }
+
   function updateSoundIcon() {
     if (ZenKnotAudio.enabled) {
       iconSoundOn.style.display = 'block';
@@ -180,11 +188,17 @@
     dragStartPos = null;
     movesCount = 0;
     undoStack = [];
+    syncUndoButton();
     hintData = null;
     if (hintTimeout) clearTimeout(hintTimeout);
     isLevelCompleted = false;
 
     displayLevelName.textContent = `Pack ${currentLevel.packId} • ${currentLevel.name}`;
+    const levelNumber = document.getElementById('display-level-number');
+    if (levelNumber) {
+      const total = ZenKnotLevels.LEVELS.length;
+      levelNumber.textContent = `${String(index + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
+    }
     displayMoves.textContent = `Moves: 0 / Par: ${currentLevel.parMoves}`;
     if (startContinueLevel) {
       startContinueLevel.textContent = `${currentLevel.id}`;
@@ -214,6 +228,7 @@
 
   function onLevelCompleted() {
     isLevelCompleted = true;
+    syncUndoButton();
     ZenKnotAudio.playVictory();
 
     // Calculate stars
@@ -257,6 +272,7 @@
     if (isLevelCompleted || undoStack.length === 0) return;
 
     const action = undoStack.pop();
+    syncUndoButton();
     const node = boardNodes.find(n => n.id === action.nodeId);
     if (node) {
       node.x = action.prevX;
@@ -334,6 +350,7 @@
       newX: node.x,
       newY: node.y
     });
+    syncUndoButton();
 
     boardEvaluation = ZenKnot.evaluateGraph(boardNodes, currentLevel.edges);
     updateCrossingBadge();
@@ -663,6 +680,7 @@
           newX: draggedNode.x,
           newY: draggedNode.y
         });
+        syncUndoButton();
 
         hintData = null;
 

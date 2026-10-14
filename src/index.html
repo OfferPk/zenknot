@@ -32,8 +32,9 @@
         <span class="brand-title">ZenKnot</span>
       </div>
 
-      <div class="level-meta">
-        <span class="level-title" id="display-level-name">Pack 1 • Triad Lyra</span>
+	      <div class="level-meta">
+	        <span class="level-kicker">CONSTELLATION <span id="display-level-number">01 / 50</span></span>
+	        <span class="level-title" id="display-level-name">Pack 1 • Triad Lyra</span>
         <div class="status-row">
           <span class="crossing-badge" id="display-crossings">
             <span id="crossing-dot">●</span>
@@ -98,9 +99,10 @@
 
     <!-- Welcoming Start Screen Overlay -->
     <div class="modal-overlay active" id="modal-start" role="dialog" aria-modal="true" aria-labelledby="start-title">
-      <div class="modal-card start-card">
-        <div class="start-brand">
-          <svg class="logo-knot-large" viewBox="0 0 100 100" aria-hidden="true">
+	      <div class="modal-card start-card">
+	        <div class="start-brand">
+	          <p class="start-eyebrow">A QUIET PUZZLE FOR A CLEAR MIND</p>
+	          <svg class="logo-knot-large" viewBox="0 0 100 100" aria-hidden="true">
             <circle cx="50" cy="50" r="40" stroke="#00f2fe" stroke-width="3" fill="none"/>
             <path d="M22 50 Q50 16 78 50 Q50 84 22 50" stroke="#fbbf24" stroke-width="2.5" fill="none"/>
             <circle cx="22" cy="50" r="7" fill="#00f2fe"/>
@@ -112,7 +114,7 @@
           <p class="tagline">Calm Planar Graph Untangling Logic Puzzle</p>
         </div>
 
-        <div class="start-instructions">
+	        <div class="start-instructions">
           <p class="start-desc">
             Drag luminous crystal nodes across the constellation canvas to untangle interwoven energy threads until <strong>zero strands cross</strong>.
           </p>
@@ -146,9 +148,15 @@
               </div>
             </div>
           </div>
-        </div>
+	        </div>
 
-        <div class="start-actions">
+	        <div class="start-stats" aria-label="Game overview">
+	          <div class="start-stat"><strong>50</strong><span>handcrafted levels</span></div>
+	          <div class="start-stat"><strong>05</strong><span>constellations</span></div>
+	          <div class="start-stat"><strong>∞</strong><span>room to retry</span></div>
+	        </div>
+
+	        <div class="start-actions">
           <button class="btn-primary" id="btn-start-play">Play Level <span id="start-continue-level">1</span></button>
           <button class="btn-secondary" id="btn-start-levels">Level Select</button>
         </div>
