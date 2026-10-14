@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#080c14">
+  <meta name="description" content="ZenKnot: Sleek, calming offline planar graph untangling logic puzzle game. Drag glowing crystal nodes to untangle intersecting energy threads.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+  <title>ZenKnot — Planar Graph Untangle Puzzle</title>
+</head>
+<body>
+  <!-- Screen reader live announcement region -->
+  <div id="sr-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <div id="app">
+    <!-- Header -->
+    <header>
+      <div class="brand" id="btn-home" role="button" tabindex="0" title="Home & Level Selector" aria-label="ZenKnot Home and Level Selector">
+        <svg class="logo-knot" viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="38" stroke="#00f2fe" stroke-width="3" fill="none"/>
+          <path d="M25 50 Q50 20 75 50 Q50 80 25 50" stroke="#fbbf24" stroke-width="2.5" fill="none"/>
+          <circle cx="25" cy="50" r="6" fill="#00f2fe"/>
+          <circle cx="75" cy="50" r="6" fill="#00f2fe"/>
+          <circle cx="50" cy="25" r="6" fill="#10b981"/>
+          <circle cx="50" cy="75" r="6" fill="#10b981"/>
+        </svg>
+        <span class="brand-title">ZenKnot</span>
+      </div>
+
+      <div class="level-meta">
+        <span class="level-title" id="display-level-name">Pack 1 • Triad Lyra</span>
+        <div class="status-row">
+          <span class="crossing-badge" id="display-crossings">
+            <span id="crossing-dot">●</span>
+            <span id="crossing-text">Crossings: 3</span>
+          </span>
+          <span class="level-moves" id="display-moves">Moves: 0 / Par: 4</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="icon-btn" id="btn-sound" title="Toggle Sound (M)" aria-label="Toggle Sound">
+          <svg id="icon-sound-on" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+          </svg>
+          <svg id="icon-sound-off" viewBox="0 0 24 24" style="display:none;" aria-hidden="true">
+            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27l4.73 4.73H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+          </svg>
+        </button>
+        <button class="icon-btn" id="btn-restart" title="Reset Level (R)" aria-label="Reset Level">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Canvas Area -->
+    <main>
+      <canvas id="game-canvas" role="region" aria-label="ZenKnot planar graph puzzle board. Drag crystal nodes with mouse or touch. Use arrow keys to nudge selected nodes." tabindex="0"></canvas>
+    </main>
+
+    <!-- Footer Controls -->
+    <footer>
+      <button class="footer-btn" id="btn-levels" aria-label="Level Select">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/>
+        </svg>
+        <span>Levels</span>
+      </button>
+
+      <button class="footer-btn" id="btn-undo" aria-label="Undo Move (Z)">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/>
+        </svg>
+        <span>Undo</span>
+      </button>
+
+      <button class="footer-btn" id="btn-hint" aria-label="Highlight Hint Node (H)">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6A4.997 4.997 0 0 1 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/>
+        </svg>
+        <span>Hint</span>
+      </button>
+
+      <button class="footer-btn" id="btn-help" aria-label="How to Play Guide">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/>
+        </svg>
+        <span>Guide</span>
+      </button>
+    </footer>
+
+    <!-- Welcoming Start Screen Overlay -->
+    <div class="modal-overlay active" id="modal-start" role="dialog" aria-modal="true" aria-labelledby="start-title">
+      <div class="modal-card start-card">
+        <div class="start-brand">
+          <svg class="logo-knot-large" viewBox="0 0 100 100" aria-hidden="true">
+            <circle cx="50" cy="50" r="40" stroke="#00f2fe" stroke-width="3" fill="none"/>
+            <path d="M22 50 Q50 16 78 50 Q50 84 22 50" stroke="#fbbf24" stroke-width="2.5" fill="none"/>
+            <circle cx="22" cy="50" r="7" fill="#00f2fe"/>
+            <circle cx="78" cy="50" r="7" fill="#00f2fe"/>
+            <circle cx="50" cy="22" r="7" fill="#10b981"/>
+            <circle cx="50" cy="78" r="7" fill="#10b981"/>
+          </svg>
+          <h1 id="start-title" class="brand-title-large">ZenKnot</h1>
+          <p class="tagline">Calm Planar Graph Untangling Logic Puzzle</p>
+        </div>
+
+        <div class="start-instructions">
+          <p class="start-desc">
+            Drag luminous crystal nodes across the constellation canvas to untangle interwoven energy threads until <strong>zero strands cross</strong>.
+          </p>
+          <div class="instruction-grid">
+            <div class="inst-item">
+              <span class="inst-icon">✨</span>
+              <div>
+                <strong>Drag Nodes</strong>
+                <p>Move nodes to untangle threads</p>
+              </div>
+            </div>
+            <div class="inst-item">
+              <span class="inst-icon">⚡</span>
+              <div>
+                <strong>Zero Crossings</strong>
+                <p>Goal: non-adjacent edges must not cross</p>
+              </div>
+            </div>
+            <div class="inst-item">
+              <span class="inst-icon">⌨️</span>
+              <div>
+                <strong>Keyboard Friendly</strong>
+                <p>Tab to select, Arrow keys to nudge</p>
+              </div>
+            </div>
+            <div class="inst-item">
+              <span class="inst-icon">🌿</span>
+              <div>
+                <strong>100% Offline</strong>
+                <p>50 verified levels, auto-save, calm audio</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="start-actions">
+          <button class="btn-primary" id="btn-start-play">Play Level <span id="start-continue-level">1</span></button>
+          <button class="btn-secondary" id="btn-start-levels">Level Select</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Victory Modal -->
+    <div class="modal-overlay" id="modal-victory" role="dialog" aria-modal="true" aria-labelledby="victory-title">
+      <div class="modal-card">
+        <h2 id="victory-title">Harmony Restored!</h2>
+        <p id="victory-subtitle">The sacred constellation is completely untangled with zero crossings.</p>
+
+        <div class="star-container" aria-label="Rating stars">
+          <svg class="star" id="v-star-1" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+          </svg>
+          <svg class="star" id="v-star-2" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+          </svg>
+          <svg class="star" id="v-star-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+          </svg>
+        </div>
+
+        <p id="victory-stats">Moves: 4 | Par: 4</p>
+        <button class="btn-primary" id="btn-next-level">Next Level</button>
+        <button class="btn-secondary" id="btn-victory-replay">Replay</button>
+      </div>
+    </div>
+
+    <!-- Level Selector Modal -->
+    <div class="modal-overlay" id="modal-levels" role="dialog" aria-modal="true" aria-labelledby="levels-title">
+      <div class="modal-card">
+        <h2 id="levels-title">Select Level</h2>
+        <div class="pack-tabs" id="pack-tabs-container" role="tablist"></div>
+        <div class="level-grid" id="level-grid-container" role="list"></div>
+        <button class="btn-secondary" id="btn-close-levels">Close</button>
+      </div>
+    </div>
+
+    <!-- Guide / How to Play Modal -->
+    <div class="modal-overlay" id="modal-help" role="dialog" aria-modal="true" aria-labelledby="help-title">
+      <div class="modal-card">
+        <h2 id="help-title">How to Play ZenKnot</h2>
+        <div class="help-content">
+          <p>• <strong>Untangle the Threads</strong>: Drag crystal nodes around the sacred canvas to untangle intersecting strands.</p>
+          <p>• <strong>The Golden Rule</strong>: Non-adjacent threads must NOT cross or overlap. Threads that connect to the same node are natural endpoints and are never crossings.</p>
+          <p>• <strong>Visual Cues</strong>: Crossing strands show coral dashed lines with glowing intersection markers. Untangled strands glow solid cyan and emerald.</p>
+          <p>• <strong>Keyboard Controls</strong>: Press <kbd>Tab</kbd> to cycle nodes, <kbd>Arrow Keys</kbd> or <kbd>WASD</kbd> to nudge nodes, <kbd>Z</kbd> to Undo, <kbd>H</kbd> for Hint, <kbd>R</kbd> to Restart.</p>
+        </div>
+        <button class="btn-primary" id="btn-close-help">Understood</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="knot.js"></script>
+  <script src="levels.js"></script>
+  <script src="audio.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

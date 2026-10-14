@@ -1,0 +1,9 @@
+{
+  "appId": "pk.offer.zenknot",
+  "appName": "ZenKnot",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "android": {
+    "backgroundColor": "#080C14"
+  }
+}

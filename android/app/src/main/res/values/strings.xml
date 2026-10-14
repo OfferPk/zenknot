@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ZenKnot</string>
+    <string name="title_activity_main">ZenKnot</string>
+    <string name="package_name">pk.offer.zenknot</string>
+    <string name="custom_url_scheme">pk.offer.zenknot</string>
+</resources>
